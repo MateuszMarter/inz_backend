@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using testServer.DTO;
 using testServer.Services;
 
 namespace testServer.Controllers;
@@ -44,5 +45,18 @@ public class UserController : ControllerBase
 
         return Ok(await _treningService.GetTreningAsync(aproxTime, days));
 
+    }
+
+    [HttpPost("AddPlan/{userId}")]
+    public async Task<IActionResult> AddPlan([FromBody] List<TreningDTO> trenings, int userId)
+    {
+        var message = await _userService.AddNewPlan(trenings, userId);
+
+        if (message.ToLower() == "ok")
+        {
+            return Ok("Plan successfully added");
+        }
+        
+        return BadRequest(message);
     }
 }
