@@ -8,10 +8,12 @@ namespace testServer.Controllers;
 public class UserController : ControllerBase
 {
     private readonly IUserService _userService;
+    private readonly ITreningService _treningService;
 
-    public UserController(IUserService userService)
+    public UserController(IUserService userService, ITreningService treningService)
     {
         _userService = userService;
+        _treningService = treningService;
     }
 
     [HttpGet("{id}")]
@@ -25,5 +27,22 @@ public class UserController : ControllerBase
         }
         
         return Ok(user);
+    }
+
+    [HttpGet("GenTraining")]
+    public async Task<IActionResult> GetUserGenTraining(int aproxTime, int days)
+    {
+        if (days < 1 || days > 7)
+        {
+            return BadRequest("Days must be between 1 and 7");
+        }
+
+        if (aproxTime < 30 || aproxTime > 120)
+        {
+            return BadRequest("Aprox time must be between 30 and 120");
+        }
+
+        return Ok(await _treningService.GetTreningAsync(aproxTime, days));
+
     }
 }
