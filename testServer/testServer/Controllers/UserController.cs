@@ -33,6 +33,7 @@ public class UserController : ControllerBase
     [HttpGet("GenTraining")]
     public async Task<IActionResult> GetUserGenTraining(int aproxTime, int days)
     {
+        
         if (days < 1 || days > 7)
         {
             return BadRequest("Days must be between 1 and 7");
@@ -50,6 +51,13 @@ public class UserController : ControllerBase
     [HttpPost("AddPlan/{userId}")]
     public async Task<IActionResult> AddPlan([FromBody] List<TreningDTO> trenings, int userId)
     {
+        var user = await _userService.GetUserByIdAsync(userId);
+
+        if (user == null)
+        {
+            return NotFound("User not found");
+        }
+        
         var message = await _userService.AddNewPlan(trenings, userId);
 
         if (message.ToLower() == "ok")
